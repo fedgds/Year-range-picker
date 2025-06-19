@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Year Picker</title>
+  <style>
+    .year-picker {
+      position: relative;
+      font-family: Arial, sans-serif;
+    }
+
+    .picker-toggle {
+      padding: 8px 16px;
+      border-radius: 8px;
+      background-color: white;
+      border: 1px solid #DFDFDF;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 250px;
+    }
+
+    .picker-toggle .text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--Grey-800, #505050);
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+    }
+
+    .picker-toggle .caret {
+      margin-left: 10px;
+    }
+
+    .dropdown-year-picker {
+      margin-top: 8px;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      display: none;
+      width: 250px;
+      border-radius: 8px;
+    }
+
+    .dropdown-year-picker .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      font-weight: bold;
+      border-bottom: 1px solid #eee;
+    }
+
+    .dropdown-year-picker .title {
+      color: #6A6A6A;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+    }
+
+    .dropdown-year-picker .arrow {
+      cursor: pointer;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .dropdown-year-picker .arrow:hover {
+      color: #666;
+    }
+
+    .dropdown-year-picker .year-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      padding: 12px;
+    }
+
+    .dropdown-year-picker .year-cell {
+      text-align: center;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .dropdown-year-picker .year-cell:hover {
+      background: #f0f0f0;
+    }
+
+    .dropdown-year-picker .year-cell.selected {
+      background: #009FE2;
+      color: #FFF;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="year-picker">
+    <button class="picker-toggle">
+      <span class="text">Chọn năm</span>
+      <span class="caret">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M6 9L12 15L18 9" stroke="#6A6A6A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </span>
+    </button>
+    <div class="dropdown-year-picker">
+      <div class="header">
+        <span class="arrow left">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M12.5 15L7.5 10L12.5 5" stroke="#6A6A6A" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </span>
+        <span class="title">Chọn năm</span>
+        <span class="arrow right">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M7.5 15L12.5 10L7.5 5" stroke="#6A6A6A" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </span>
+      </div>
+      <div class="year-grid">
+        
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pickerToggle = document.querySelector('.picker-toggle');
+    const dropdown = document.querySelector('.dropdown-year-picker');
+    const leftArrow = document.querySelector('.dropdown-year-picker .arrow.left');
+    const rightArrow = document.querySelector('.dropdown-year-picker .arrow.right');
+    const yearGrid = document.querySelector('.dropdown-year-picker .year-grid');
+    const textSpan = document.querySelector('.picker-toggle .text');
+
+    let startYear = 2014;
+    let selectedYear = null;
+
+    function updateToggleButton() {
+      textSpan.innerHTML = selectedYear ? `Năm: <strong>${selectedYear}</strong>` : 'Chọn năm';
+    }
+
+    function generateYearGrid() {
+      yearGrid.innerHTML = '';
+      for (let i = 0; i < 12; i++) {
+        const year = startYear + i;
+        const yearCell = document.createElement('div');
+        yearCell.className = 'year-cell';
+        yearCell.textContent = year;
+
+        if (year === selectedYear) {
+          yearCell.classList.add('selected');
+        }
+
+        yearCell.addEventListener('click', () => {
+          selectedYear = year;
+          updateToggleButton();
+          generateYearGrid();
+          dropdown.style.display = 'none';
+        });
+
+        yearGrid.appendChild(yearCell);
+      }
+    }
+
+    pickerToggle.addEventListener('click', () => {
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+      generateYearGrid();
+    });
+
+    leftArrow.addEventListener('click', () => {
+      startYear -= 12;
+      generateYearGrid();
+    });
+
+    rightArrow.addEventListener('click', () => {
+      startYear += 12;
+      generateYearGrid();
+    });
+
+    updateToggleButton();
+  </script>
+</body>
+
+</html>
